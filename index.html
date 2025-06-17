@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار مدخل في التربية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007BFF; /* Blue */
+            --secondary-color: #6C757D; /* Grey */
+            --accent-color: #28A745; /* Green for correct */
+            --danger-color: #DC3545; /* Red for incorrect */
+            --background-light: #f8f9fa;
+            --text-dark: #343a40;
+            --text-light: #fff;
+            --card-bg: #ffffff;
+            --border-color: #dee2e6;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Changa', sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .exam-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px var(--shadow-light);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            border: 1px solid var(--border-color);
+            direction: rtl;
+            text-align: right;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--secondary-color);
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+
+        .author-info {
+            font-size: 1.0em;
+            color: #555;
+            margin-top: 15px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+        }
+
+        .instructions {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+            color: #555;
+            background-color: #e9f7ef;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid #d4edda;
+        }
+
+        .question-card {
+            background-color: #fefefe;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .question-card p {
+            font-size: 1.25em;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+            line-height: 1.8;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            cursor: pointer;
+            padding: 12px 18px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            background-color: var(--text-light);
+            display: flex;
+            align-items: center;
+        }
+
+        .options label:hover {
+            background-color: var(--background-light);
+            border-color: var(--primary-color);
+        }
+
+        .options input[type="radio"] {
+            margin-left: 12px;
+            transform: scale(1.3);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .submit-btn {
+            display: block;
+            width: fit-content;
+            margin: 40px auto 0;
+            padding: 18px 50px;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border: none;
+            border-radius: 10px;
+            font-size: 1.4em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .submit-btn:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .results {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px dashed var(--border-color);
+            text-align: center;
+            font-size: 1.6em;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: none; /* Hidden by default */
+        }
+
+        .results p {
+            margin-bottom: 20px;
+        }
+
+        .correct-answer {
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 1em;
+            text-align: right;
+            padding-right: 15px;
+        }
+
+        .incorrect-answer {
+            color: var(--danger-color);
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 1em;
+            text-align: right;
+            padding-right: 15px;
+        }
+        .question-card.answered label {
+            pointer-events: none; /* Disable clicking after submission */
+        }
+    </style>
+</head>
+<body>
+    <div class="exam-container">
+        <header>
+            <h1>اختبار في مدخل التربية</h1>
+            <p>للفصول الثالث والرابع والخامس</p>
+            <div class="author-info">
+                إعداد: قيس الجازي لجيهان الطفلة
+            </div>
+        </header>
+
+        <div class="instructions">
+            أجب عن 50 سؤالاً لاختبار معرفتك بالأسس الفلسفية، الاجتماعية، والنفسية للتربية.
+            اختر الإجابة الصحيحة لكل سؤال.
+        </div>
+
+        <form id="quizForm">
+            <div class="question-card">
+                <p>1. الفيلسوف اليوناني الذي يُعد أول من وضع معنى محدداً لكلمة الفلسفة هو:</p>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="a"> أ) أرسطو</label>
+                    <label><input type="radio" name="q1" value="b"> ب) أفلاطون</label>
+                    <label><input type="radio" name="q1" value="c"> ج) فيثاغورس</label>
+                    <label><input type="radio" name="q1" value="d"> د) سقراط</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>2. كلمة "فلسفة" تعني "محبة الحكمة" في اللغة اليونانية.</p>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="a"> صحيح</label>
+                    <label><input type="radio" name="q2" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>3. أي من ميادين الفلسفة يبحث في طبيعة المعرفة ومصادرها وحدودها؟</p>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="a"> أ) الميتافيزيقا</label>
+                    <label><input type="radio" name="q3" value="b"> ب) الإبستمولوجيا</label>
+                    <label><input type="radio" name="q3" value="c"> ج) الإكسيولوجيا</label>
+                    <label><input type="radio" name="q3" value="d"> د) الأخلاق</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>4. التربية هي الأداة التي يمكن من خلالها تحويل الأفكار الفلسفية المجردة إلى ممارسات واقعية.</p>
+                <div class="options">
+                    <label><input type="radio" name="q4" value="a"> صحيح</label>
+                    <label><input type="radio" name="q4" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>5. الفلسفة المثالية ترى أن الحقيقة المطلقة تكمن في:</p>
+                <div class="options">
+                    <label><input type="radio" name="q5" value="a"> أ) العالم المادي</label>
+                    <label><input type="radio" name="q5" value="b"> ب) الخبرة الحسية</label>
+                    <label><input type="radio" name="q5" value="c"> ج) عالم الأفكار والمثل العليا</label>
+                    <label><input type="radio" name="q5" value="d"> د) التفاعل الاجتماعي</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>6. الفلسفة الواقعية تؤكد على أهمية تنمية العقل والروح أكثر من العالم المادي.</p>
+                <div class="options">
+                    <label><input type="radio" name="q6" value="a"> صحيح</label>
+                    <label><input type="radio" name="q6" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>7. رائد الفلسفة الطبيعية الذي يؤمن بأن الإنسان خير بطبعه هو:</p>
+                <div class="options">
+                    <label><input type="radio" name="q7" value="a"> أ) أرسطو</label>
+                    <label><input type="radio" name="q7" value="b"> ب) جان جاك روسو</label>
+                    <label><input type="radio" name="q7" value="c"> ج) جون ديوي</label>
+                    <label><input type="radio" name="q7" value="d"> د) أفلاطون</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>8. الفلسفة الطبيعية تشجع التعليم الرسمي المقيد في المدارس.</p>
+                <div class="options">
+                    <label><input type="radio" name="q8" value="a"> صحيح</label>
+                    <label><input type="radio" name="q8" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>9. أي الفلسفات التالية تركز على حرية الفرد ومسؤوليته في تحديد معناه ووجوده؟</p>
+                <div class="options">
+                    <label><input type="radio" name="q9" value="a"> أ) الفلسفة الواقعية</label>
+                    <label><input type="radio" name="q9" value="b"> ب) الفلسفة الجوهرية</label>
+                    <label><input type="radio" name="q9" value="c"> ج) الفلسفة الوجودية</label>
+                    <label><input type="radio" name="q9" value="d"> د) الفلسفة البراغماتية</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>10. الفلسفة الإسلامية تهدف إلى تحقيق التوازن بين الجوانب الروحية والعقلية والجسدية للإنسان.</p>
+                <div class="options">
+                    <label><input type="radio" name="q10" value="a"> صحيح</label>
+                    <label><input type="radio" name="q10" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>11. من أبرز رواد الفلسفة البراغماتية التي تركز على التجربة والحل العملي للمشكلات هو:</p>
+                <div class="options">
+                    <label><input type="radio" name="q11" value="a"> أ) أفلاطون</label>
+                    <label><input type="radio" name="q11" value="b"> ب) جون ديوي</label>
+                    <label><input type="radio" name="q11" value="c"> ج) جان جاك روسو</label>
+                    <label><input type="radio" name="q11" value="d"> د) أرسطو</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>12. الفلسفة البنائية تؤكد أن المعرفة تُنقل جاهزة إلى المتعلم دون بناء من قبله.</p>
+                <div class="options">
+                    <label><input type="radio" name="q12" value="a"> صحيح</label>
+                    <label><input type="radio" name="q12" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>13. أي الفلسفات التالية تركز على المواد الأساسية مثل القراءة والكتابة والرياضيات؟</p>
+                <div class="options">
+                    <label><input type="radio" name="q13" value="a"> أ) الفلسفة التقدمية</label>
+                    <label><input type="radio" name="q13" value="b"> ب) الفلسفة الجوهرية</label>
+                    <label><input type="radio" name="q13" value="c"> ج) الفلسفة التحليلية</label>
+                    <label><input type="radio" name="q13" value="d"> د) الفلسفة البراغماتية</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>14. الفلسفة التحليلية تركز على تحليل اللغة والمفاهيم لتوضيح المعنى.</p>
+                <div class="options">
+                    <label><input type="radio" name="q14" value="a"> صحيح</label>
+                    <label><input type="radio" name="q14" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>15. في أي فلسفة تربوية يُعتبر المعلم "ميسرًا غير مباشر" ويوفر بيئة تعليمية غنية؟</p>
+                <div class="options">
+                    <label><input type="radio" name="q15" value="a"> أ) الفلسفة المثالية</label>
+                    <label><input type="radio" name="q15" value="b"> ب) الفلسفة الجوهرية</label>
+                    <label><input type="radio" name="q15" value="c"> ج) الفلسفة الطبيعية</label>
+                    <label><input type="radio" name="q15" value="d"> د) الفلسفة الإسلامية</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>16. المجتمع هو مجموعة من الأفراد يعيشون معاً ويتفاعلون ويشتركون في ثقافة مشتركة.</p>
+                <div class="options">
+                    <label><input type="radio" name="q16" value="a"> صحيح</label>
+                    <label><input type="radio" name="q16" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>17. أي مما يلي يُعد من أبرز وظائف التربية الاجتماعية؟</p>
+                <div class="options">
+                    <label><input type="radio" name="q17" value="a"> أ) زيادة الدخل الفردي.</label>
+                    <label><input type="radio" name="q17" value="b"> ب) نقل الثقافة والتراث.</label>
+                    <label><input type="radio" name="q17" value="c"> ج) عزل الأفراد عن المجتمع.</label>
+                    <label><input type="radio" name="q17" value="d"> د) تحديد الأهداف الاقتصادية فقط.</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>18. التربية تساهم في تحقيق التكيف الاجتماعي للأفراد مع المتغيرات.</p>
+                <div class="options">
+                    <label><input type="radio" name="q18" value="a"> صحيح</label>
+                    <label><input type="radio" name="q18" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>19. أي من المؤسسات التالية تُعد المؤسسة التربوية الاجتماعية الأولى والأكثر أهمية؟</p>
+                <div class="options">
+                    <label><input type="radio" name="q19" value="a"> أ) المدرسة</label>
+                    <label><input type="radio" name="q19" value="b"> ب) وسائل الإعلام</label>
+                    <label><input type="radio" name="q19" value="c"> ج) الأسرة</label>
+                    <label><input type="radio" name="q19" value="d"> د) المؤسسات الدينية</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>20. العولمة أدت إلى تقليل التفاعل الثقافي بين المجتمعات، مما يقلل من تحديات التربية.</p>
+                <div class="options">
+                    <label><input type="radio" name="q20" value="a"> صحيح</label>
+                    <label><input type="radio" name="q20" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>21. من التحديات الاجتماعية التي تواجه التربية في العصر الحديث:</p>
+                <div class="options">
+                    <label><input type="radio" name="q21" value="a"> أ) استقرار القيم الاجتماعية.</label>
+                    <label><input type="radio" name="q21" value="b"> ب) التغير الاجتماعي السريع.</label>
+                    <label><input type="radio" name="q21" value="c"> ج) ضعف دور الأسرة فقط.</label>
+                    <label><input type="radio" name="q21" value="d"> د) قلة استخدام التكنولوجيا.</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>22. التربية تسهم في تنمية الوعي النقدي وتشجيع الابتكار والتفكير المستقل لدى الأفراد.</p>
+                <div class="options">
+                    <label><input type="radio" name="q22" value="a"> صحيح</label>
+                    <label><input type="radio" name="q22" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>23. توفير فرص الحراك الاجتماعي من وظائف التربية التي تعني:</p>
+                <div class="options">
+                    <label><input type="radio" name="q23" value="a"> أ) تثبيت الوضع الاجتماعي للفرد.</label>
+                    <label><input type="radio" name="q23" value="b"> ب) إتاحة فرص لتحسين الوضع الاقتصادي والاجتماعي للفرد.</label>
+                    <label><input type="radio" name="q23" value="c"> ج) التركيز على الأفراد ذوي الدخل المرتفع.</label>
+                    <label><input type="radio" name="q23" value="d"> د) الاعتماد على الثروة الموروثة فقط.</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>24. وسائل الإعلام لا تلعب دورًا في تشكيل الوعي الاجتماعي.</p>
+                <div class="options">
+                    <label><input type="radio" name="q24" value="a"> صحيح</label>
+                    <label><input type="radio" name="q24" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>25. العلاقة بين المجتمع والتربية هي علاقة:</p>
+                <div class="options">
+                    <label><input type="radio" name="q25" value="a"> أ) أحادية الاتجاه من المجتمع للتربية.</label>
+                    <label><input type="radio" name="q25" value="b"> ب) أحادية الاتجاه من التربية للمجتمع.</label>
+                    <label><input type="radio" name="q25" value="c"> ج) تبادلية وتأثير متبادل.</label>
+                    <label><input type="radio" name="q25" value="d"> د) غير مباشرة ولا يوجد تأثير.</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>26. أي فروع علم النفس يهتم بدراسة العمليات النفسية التي تحدث في سياق التعليم والتعلم؟</p>
+                <div class="options">
+                    <label><input type="radio" name="q26" value="a"> أ) علم النفس الاجتماعي</label>
+                    <label><input type="radio" name="q26" value="b"> ب) علم النفس الإكلينيكي</label>
+                    <label><input type="radio" name="q26" value="c"> ج) علم النفس التربوي</label>
+                    <label><input type="radio" name="q26" value="d"> د) علم النفس التنموي</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>27. يساعد علم النفس التربوي المعلم على فهم طبيعة الطلاب واختلافاتهم الفردية.</p>
+                <div class="options">
+                    <label><input type="radio" name="q27" value="a"> صحيح</label>
+                    <label><input type="radio" name="q27" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>28. النظرية التي تركز على أن التعلم هو نتيجة للتغيرات في السلوك الملاحظ نتيجة للاستجابات للمثيرات البيئية هي:</p>
+                <div class="options">
+                    <label><input type="radio" name="q28" value="a"> أ) النظرية المعرفية</label>
+                    <label><input type="radio" name="q28" value="b"> ب) النظرية السلوكية</label>
+                    <label><input type="radio" name="q28" value="c"> ج) النظرية الإنسانية</label>
+                    <label><input type="radio" name="q28" value="d"> د) النظرية البنائية</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>29. من مبادئ النظرية السلوكية التركيز على التعزيز والعقاب لتشكيل السلوك.</p>
+                <div class="options">
+                    <label><input type="radio" name="q29" value="a"> صحيح</label>
+                    <label><input type="radio" name="q29" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>30. أي النظريات تشبه العقل البشري بجهاز معالجة المعلومات وتركز على الانتباه والإدراك والذاكرة؟</p>
+                <div class="options">
+                    <label><input type="radio" name="q30" value="a"> أ) النظرية السلوكية</label>
+                    <label><input type="radio" name="q30" value="b"> ب) النظرية المعرفية</label>
+                    <label><input type="radio" name="q30" value="c"> ج) النظرية الإنسانية</label>
+                    <label><input type="radio" name="q30" value="d"> د) النظرية البنائية</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>31. النظرية البنائية تؤكد أن المتعلم يبني معرفته بنفسه من خلال التفاعل مع البيئة.</p>
+                <div class="options">
+                    <label><input type="radio" name="q31" value="a"> صحيح</label>
+                    <label><input type="radio" name="q31" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>32. من أبرز رواد النظرية الإنسانية التي تركز على تحقيق الذات والدافعية الداخلية للتعلم:</p>
+                <div class="options">
+                    <label><input type="radio" name="q32" value="a"> أ) جان بياجيه</label>
+                    <label><input type="radio" name="q32" value="b"> ب) جون واتسون</label>
+                    <label><input type="radio" name="q32" value="c"> ج) أبراهام ماسلو</label>
+                    <label><input type="radio" name="q32" value="d"> د) ليف فيغوتسكي</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>33. التعليم المتمايز يعني تقديم نفس المناهج وطرق التدريس لجميع الطلاب دون اختلاف.</p>
+                <div class="options">
+                    <label><input type="radio" name="q33" value="a"> صحيح</label>
+                    <label><input type="radio" name="q33" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>34. القوة المحركة التي تدفع الأفراد نحو التعلم وتحقيق الأهداف هي:</p>
+                <div class="options">
+                    <label><input type="radio" name="q34" value="a"> أ) القدرة المعرفية</label>
+                    <label><input type="radio" name="q34" value="b"> ب) الدافعية</label>
+                    <label><input type="radio" name="q34" value="c"> ج) الخبرة الحسية</label>
+                    <label><input type="radio" name="q34" value="d"> د) التكرار</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>35. الدافعية الخارجية تنبع من رغبة الفرد الذاتية في التعلم والاستكشاف.</p>
+                <div class="options">
+                    <label><input type="radio" name="q35" value="a"> صحيح</label>
+                    <label><input type="radio" name="q35" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>36. أي من مراحل النمو المعرفي لبياجيه يتميز بالقدرة على التفكير المجرد والافتراضي؟</p>
+                <div class="options">
+                    <label><input type="radio" name="q36" value="a"> أ) المرحلة الحسية الحركية</label>
+                    <label><input type="radio" name="q36" value="b"> ب) مرحلة ما قبل العمليات</label>
+                    <label><input type="radio" name="q36" value="c"> ج) مرحلة العمليات المادية</label>
+                    <label><input type="radio" name="q36" value="d"> د) مرحلة العمليات الشكلية</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>37. مفهوم دوام الشيء (object permanence) يتطور في المرحلة الحسية الحركية.</p>
+                <div class="options">
+                    <label><input type="radio" name="q37" value="a"> صحيح</label>
+                    <label><input type="radio" name="q37" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>38. يميل الأطفال في مرحلة ما قبل العمليات إلى التفكير المركزي، وهو يعني:</p>
+                <div class="options">
+                    <label><input type="radio" name="q38" value="a"> أ) القدرة على رؤية الأمور من منظور الآخرين.</label>
+                    <label><input type="radio" name="q38" value="b"> ب) التركيز على جانب واحد فقط من المشكلة.</label>
+                    <label><input type="radio" name="q38" value="c"> ج) التفكير المنطقي في الأمور الملموسة.</label>
+                    <label><input type="radio" name="q38" value="d"> د) القدرة على حل المشكلات المعقدة.</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>39. تهدف استراتيجيات تعزيز الدافعية إلى تقليل مشاركة الطلاب في الأنشطة الصفية.</p>
+                <div class="options">
+                    <label><input type="radio" name="q39" value="a"> صحيح</label>
+                    <label><input type="radio" name="q39" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>40. عندما يتغير شكل كمية المادة ولكنها تظل كما هي، فإن هذا الفهم يتطور في مرحلة بياجيه للنمو المعرفي التي تسمى:</p>
+                <div class="options">
+                    <label><input type="radio" name="q40" value="a"> أ) المرحلة الحسية الحركية</label>
+                    <label><input type="radio" name="q40" value="b"> ب) مرحلة العمليات المادية</label>
+                    <label><input type="radio" name="q40" value="c"> ج) مرحلة ما قبل العمليات</label>
+                    <label><input type="radio" name="q40" value="d"> د) مرحلة العمليات الشكلية</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>41. من مبادئ الفلسفة الواقعية في التربية:</p>
+                <div class="options">
+                    <label><input type="radio" name="q41" value="a"> أ) التركيز على القيم الأخلاقية السامية.</label>
+                    <label><input type="radio" name="q41" value="b"> ب) أهمية الخبرة الحسية والملاحظة.</label>
+                    <label><input type="radio" name="q41" value="c"> ج) رفض التعليم الرسمي المقيد.</label>
+                    <label><input type="radio" name="q41" value="d"> د) التركيز على حرية الفرد ومسؤوليته.</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>42. الفقر والتفاوت الاجتماعي من التحديات التي يجب أن تتجاهلها التربية.</p>
+                <div class="options">
+                    <label><input type="radio" name="q42" value="a"> صحيح</label>
+                    <label><input type="radio" name="q42" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>43. أي مما يلي يُعد من أنواع الفروق الفردية في التعلم؟</p>
+                <div class="options">
+                    <label><input type="radio" name="q43" value="a"> أ) الفروق في لون الشعر.</label>
+                    <label><input type="radio" name="q43" value="b"> ب) الفروق في القدرات المعرفية.</label>
+                    <label><input type="radio" name="q43" value="c"> ج) الفروق في الطول.</label>
+                    <label><input type="radio" name="q43" value="d"> د) الفروق في عدد أفراد الأسرة.</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>44. الفلسفة التقدمية تتمركز حول المحتوى الدراسي فقط وليس حول حاجات الطفل.</p>
+                <div class="options">
+                    <label><input type="radio" name="q44" value="a"> صحيح</label>
+                    <label><input type="radio" name="q44" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>45. المدرسة هي المؤسسة التربوية الرسمية التي تهدف إلى:</p>
+                <div class="options">
+                    <label><input type="radio" name="q45" value="a"> أ) توفير الأماكن الترفيهية فقط.</label>
+                    <label><input type="radio" name="q45" value="b"> ب) توفير التعليم المنهجي والمنظم.</label>
+                    <label><input type="q45" value="c"> ج) إدارة الشؤون الاقتصادية للمجتمع.</label>
+                    <label><input type="radio" name="q45" value="d"> د) فرض آراء محددة على الأفراد.</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>46. التعلم المبرمج، حيث يتم تقسيم المحتوى لوحدات صغيرة، هو من مبادئ النظرية المعرفية.</p>
+                <div class="options">
+                    <label><input type="radio" name="q46" value="a"> صحيح</label>
+                    <label><input type="radio" name="q46" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>47. الفلسفة التي تؤكد على أن التعلم يتطلب جهدًا وانضباطًا من الطالب، وأن دور المدرسة نقل المعرفة هو:</p>
+                <div class="options">
+                    <label><input type="radio" name="q47" value="a"> أ) الفلسفة الإنسانية</label>
+                    <label><input type="radio" name="q47" value="b"> ب) الفلسفة البنائية</label>
+                    <label><input type="radio" name="q47" value="c"> ج) الفلسفة الجوهرية</label>
+                    <label><input type="radio" name="q47" value="d"> د) الفلسفة الطبيعية</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>48. من وظائف التربية الاجتماعية إعداد الأفراد للمواطنة الصالحة.</p>
+                <div class="options">
+                    <label><input type="radio" name="q48" value="a"> صحيح</label>
+                    <label><input type="radio" name="q48" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>49. يساعد علم النفس التربوي المعلم على تصميم أدوات تقييم متنوعة وفعالة لقياس مدى تحقيق الطلاب لأهداف التعلم، هذا ضمن وظيفة:</p>
+                <div class="options">
+                    <label><input type="radio" name="q49" value="a"> أ) إدارة الصف</label>
+                    <label><input type="radio" name="q49" value="b"> ب) تقييم التعلم</label>
+                    <label><input type="radio" name="q49" value="c"> ج) فهم الطلاب</label>
+                    <label><input type="radio" name="q49" value="d"> د) تطوير الذات المهني</label>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <p>50. الفلسفة الإسلامية تركز فقط على الجانب الروحي دون العقلاني والجسدي.</p>
+                <div class="options">
+                    <label><input type="radio" name="q50" value="a"> صحيح</label>
+                    <label><input type="radio" name="q50" value="b"> خطأ</label>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">إرسال الإجابات</button>
+        </form>
+
+        <div id="results" class="results">
+            </div>
+    </div>
+
+    <script>
+        const answers = {
+            q1: 'c', // فيثاغورس
+            q2: 'a', // صحيح
+            q3: 'b', // الإبستمولوجيا
+            q4: 'a', // صحيح
+            q5: 'c', // عالم الأفكار والمثل العليا
+            q6: 'b', // خطأ (الواقعية تركز على العالم المادي)
+            q7: 'b', // جان جاك روسو
+            q8: 'b', // خطأ (الطبيعية ترفض التعليم المقيد)
+            q9: 'c', // الفلسفة الوجودية
+            q10: 'a', // صحيح
+            q11: 'b', // جون ديوي
+            q12: 'b', // خطأ (البنائية تؤكد أن المتعلم يبني معرفته)
+            q13: 'b', // الفلسفة الجوهرية
+            q14: 'a', // صحيح
+            q15: 'c', // الفلسفة الطبيعية
+            q16: 'a', // صحيح
+            q17: 'b', // نقل الثقافة والتراث
+            q18: 'a', // صحيح
+            q19: 'c', // الأسرة
+            q20: 'b', // خطأ (العولمة تزيد التفاعل وتزيد التحديات)
+            q21: 'b', // التغير الاجتماعي السريع
+            q22: 'a', // صحيح
+            q23: 'b', // إتاحة فرص لتحسين الوضع الاقتصادي والاجتماعي للفرد.
+            q24: 'b', // خطأ (تلعب دورًا كبيرًا)
+            q25: 'c', // تبادلية وتأثير متبادل
+            q26: 'c', // علم النفس التربوي
+            q27: 'a', // صحيح
+            q28: 'b', // النظرية السلوكية
+            q29: 'a', // صحيح
+            q30: 'b', // النظرية المعرفية
+            q31: 'a', // صحيح
+            q32: 'c', // أبراهام ماسلو
+            q33: 'b', // خطأ (المتمايز يعني تعديل المناهج)
+            q34: 'b', // الدافعية
+            q35: 'b', // خطأ (الداخلية تنبع من الذاتية)
+            q36: 'd', // مرحلة العمليات الشكلية
+            q37: 'a', // صحيح
+            q38: 'b', // التركيز على جانب واحد فقط من المشكلة
+            q39: 'b', // خطأ (تهدف إلى زيادة المشاركة)
+            q40: 'b', // مرحلة العمليات المادية
+            q41: 'b', // أهمية الخبرة الحسية والملاحظة
+            q42: 'b', // خطأ (يجب أن تسعى التربية لتحقيق العدالة)
+            q43: 'b', // الفروق في القدرات المعرفية
+            q44: 'b', // خطأ (التقدمية تتمركز حول الطفل)
+            q45: 'b', // توفير التعليم المنهجي والمنظم
+            q46: 'b', // خطأ (من مبادئ النظرية السلوكية)
+            q47: 'c', // الفلسفة الجوهرية
+            q48: 'a', // صحيح
+            q49: 'b', // تقييم التعلم
+            q50: 'b'  // خطأ (الإسلامية توازن بين الجوانب الروحية والعقلية والجسدية)
+        };
+
+        document.getElementById('quizForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // منع الإرسال الافتراضي للصفحة
+
+            let score = 0;
+            const form = event.target;
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<h2>نتائج الامتحان</h2>'; // مسح النتائج السابقة
+            resultsDiv.style.display = 'block';
+
+            for (let i = 1; i <= 50; i++) {
+                const questionName = 'q' + i;
+                const selectedOption = form.elements[questionName];
+                let userAnswer = '';
+                if (selectedOption) { // Check if question exists and has options
+                    if (selectedOption.value) { // For radio buttons if one is checked
+                        userAnswer = selectedOption.value;
+                    } else { // For radio button groups, iterate to find checked
+                        for(let j = 0; j < selectedOption.length; j++) {
+                            if (selectedOption[j].checked) {
+                                userAnswer = selectedOption[j].value;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                const correctAnswer = answers[questionName];
+                const questionCard = document.querySelector(`input[name="${questionName}"]`).closest('.question-card');
+                const questionText = questionCard.querySelector('p').textContent;
+
+                const resultParagraph = document.createElement('p');
+                resultParagraph.innerHTML = `<strong>${questionText}</strong><br>`;
+
+                if (userAnswer === correctAnswer) {
+                    score++;
+                    resultParagraph.classList.add('correct-answer');
+                    resultParagraph.innerHTML += `إجابتك: صحيحة.`;
+                } else {
+                    resultParagraph.classList.add('incorrect-answer');
+                    let correctOptionLabel = '';
+                    if (correctAnswer) {
+                        const correctInput = questionCard.querySelector(`input[value="${correctAnswer}"]`);
+                        if (correctInput) {
+                            correctOptionLabel = correctInput.closest('label').textContent.trim();
+                        }
+                    }
+                    resultParagraph.innerHTML += `إجابتك: خاطئة. الإجابة الصحيحة هي: ${correctOptionLabel}`;
+                }
+                resultsDiv.appendChild(resultParagraph);
+            }
+
+            const totalScoreParagraph = document.createElement('p');
+            totalScoreParagraph.innerHTML = `<br>لقد حصلت على <strong>${score} من 50</strong>.`;
+            resultsDiv.prepend(totalScoreParagraph); // Add score at the top
+
+            // Disable form after submission for review
+            const questionCards = document.querySelectorAll('.question-card');
+            questionCards.forEach(card => card.classList.add('answered'));
+            form.querySelector('.submit-btn').style.display = 'none'; // Hide submit button
+        });
+    </script>
+</body>
+</html>
